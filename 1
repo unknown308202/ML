@@ -1,0 +1,38 @@
+import pandas as pd
+import numpy as np
+
+# Load the dataset
+df = pd.read_csv("C:\\Users\\bhumi\\OneDrive\\Desktop\\dataset\\possum.csv")
+df.sample(7)
+
+# Define a function to calculate mode
+def calculate_mode(series):
+    mode_value = series.mode()
+    if len(mode_value) > 0:
+        return mode_value[0]
+    else:
+        return None
+
+# Group by 'chest' and calculate central tendencies and dispersion for 'belly'
+mean = df.groupby(["chest"])["belly"].mean()
+median = df.groupby(["chest"])["belly"].median()
+mode = df.groupby("chest")["belly"].apply(calculate_mode)
+var = df.groupby(["chest"])["belly"].var()
+std = df.groupby(["chest"])["belly"].std()
+
+# Print central tendencies
+print("Central tendencies of belly grouped by chest")
+print("Mean")
+print(mean)
+print("\nMedian")
+print(median)
+print("\nMode")
+print(mode)
+print("\n")
+
+# Print measures of dispersion
+print("Measure of dispersion of belly grouped by chest")
+print("Variance")
+print(var)
+print("\nStandard deviation")
+print(std)
