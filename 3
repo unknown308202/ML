@@ -1,0 +1,52 @@
+# Step 1: Importing the necessary libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Step 2: Loading the Marksheet Dataset
+df = pd.read_csv("C:\\Users\\bhumi\\OneDrive\\Desktop\\dataset\\marksheet.csv")
+
+# Step 3: Basic Data Analysis
+# Viewing the first few rows of the dataset
+print(df.head())
+
+# Checking for missing values
+print("\nMissing Values:")
+print(df.isnull().sum())
+
+# Descriptive statistics
+print("\nDescriptive Statistics:")
+print(df.describe())
+
+# Step 4: Visualizing the data
+
+# Scatter plot for Maths vs Science marks
+plt.figure(figsize=(8,6))
+plt.scatter(df['Maths'], df['Science'], color='blue')
+plt.title("Maths vs Science Marks")
+plt.xlabel("Maths Marks")
+plt.ylabel("Science Marks")
+plt.grid(True)
+plt.show()
+
+# Distribution plot for Percentage
+plt.figure(figsize=(8,6))
+sns.histplot(df['Age'], bins=10, kde=True, color='green')
+plt.title("Distribution of Age")
+plt.xlabel("Age")
+plt.ylabel("Frequency")
+plt.show()
+
+# Boxplot to show marks distribution in different subjects
+plt.figure(figsize=(8,6))
+sns.boxplot(data=df[['Maths', 'Science', 'English']])
+plt.title("Boxplot for Marks in Subjects")
+plt.ylabel("Marks")
+plt.show()
+
+# Correlation heatmap for subjects
+plt.figure(figsize=(8,6))
+correlation = df[['Maths', 'Science', 'English']].corr()
+sns.heatmap(correlation, annot=True, cmap='coolwarm', linewidths=0.5)
+plt.title("Correlation Heatmap")
+plt.show()
