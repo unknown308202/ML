@@ -1,0 +1,41 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
+
+# Load the Mushroom Dataset
+data = pd.read_csv("C:\\Users\\bhumi\\OneDrive\\Desktop\\dataset\\mushrooms.csv")
+
+# Preprocess: Convert categorical data to numeric
+data = data.apply(LabelEncoder().fit_transform)
+
+# Features and target
+X = data.drop('class', axis=1)  # Features (all columns except 'class')
+y = data['class']                # Target (the 'class' column)
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create and train the SVM classifier
+svm_classifier = SVC(kernel='linear')
+svm_classifier.fit(X_train, y_train)
+
+# Make predictions and calculate accuracy
+y_pred = svm_classifier.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy:.2f}")
+
+# Visualization: Plot the feature importance (coefficients)
+# Coefficients of the linear SVM
+coefficients = svm_classifier.coef_[0]
+
+# Plotting feature importances
+plt.figure(figsize=(10, 6))
+plt.barh(X.columns, coefficients, color='skyblue')
+plt.title('Feature Importance (SVM Coefficients)')
+plt.xlabel('Coefficient Value')
+plt.ylabel('Feature')
+plt.grid(True)
+plt.show()
