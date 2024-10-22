@@ -2,24 +2,43 @@ import pandas as pd
 import statistics as stat
 import numpy as np
 import math
+from scipy import stats
 
+# Load the dataset
 df = pd.read_csv("C:\\Users\\bhumi\\OneDrive\\Desktop\\dataset\\marksheet.csv")
-df.sample(10)
+df.sample(10)  # Display a random sample of 10 rows
 
-print("Mean: ", df["Age"].mean())
-print("Median: ", df["Age"].median())
-print("Mode: ", df["Age"].mode())
-print("Variance: ", df["Age"].var())
-print("Standard Deviation: ", df["Age"].std())
+# Function to calculate and print statistics for a given column
+def print_statistics(column_name):
+    print(f"Statistics for '{column_name}':")
+    print("Mean: ", df[column_name].mean())
+    print("Median: ", df[column_name].median())
+    print("Mode: ", df[column_name].mode()[0])  # mode() returns a Series, taking the first value
+    print("Variance: ", df[column_name].var())
+    print("Standard Deviation: ", df[column_name].std())
+    print("Skewness: ", df[column_name].skew())  # Measure of asymmetry
+    print("Kurtosis: ", df[column_name].kurt())  # Measure of tailedness
+    print()
 
-print("Mean: ", df["Science"].mean())
-print("Median: ", df["Science"].median())
-print("Mode: ", df["Science"].mode())
-print("Variance: ", df["Science"].var())
-print("Standard Deviation: ", df["Science"].std())
+# Calculate statistics for 'Age', 'Science', and 'History'
+print_statistics("Age")
+print_statistics("Science")
+print_statistics("History")
 
-print("Mean: ", df["History"].mean())
-print("Median: ", df["History"].median())
-print("Mode: ", df["History"].mode())
-print("Variance: ", df["History"].var())
-print("Standard Deviation: ", df["History"].std())
+# Using NumPy for additional calculations
+age_array = np.array(df["Age"])
+science_array = np.array(df["Science"])
+history_array = np.array(df["History"])
+
+# Calculate additional NumPy statistics
+print("NumPy Statistics:")
+print("Age - Mean: ", np.mean(age_array))
+print("Science - Mean: ", np.mean(science_array))
+print("History - Mean: ", np.mean(history_array))
+
+# Using SciPy to perform a t-test on the Science and History scores
+t_statistic, p_value = stats.ttest_ind(df["Science"], df["History"])
+print(f"T-test between Science and History: t-statistic = {t_statistic}, p-value = {p_value}")
+
+# Using Math module for square root of variance
+print("Square root of Age Variance (using math.sqrt):", math.sqrt(df["Age"].var()))
