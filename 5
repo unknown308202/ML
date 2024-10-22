@@ -1,0 +1,89 @@
+# Step 1: Import Required Libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.metrics import classification_report, confusion_matrix
+import warnings
+warnings.filterwarnings('ignore')
+
+# Step 2: Load the Dataset
+# Replace 'path_to_your_fish_dataset.csv' with your actual file path
+data = pd.read_csv('C:\\Users\\bhumi\\OneDrive\\Desktop\\dataset\\Fish.csv')
+
+# Display the first few rows
+print("Data Overview:")
+print(data.head())
+
+# Step 3: Preprocess the Data
+# Convert categorical 'Species' to numeric
+data['Species'] = data['Species'].astype('category').cat.codes
+
+# Split features and target variable
+X = data.drop('Species', axis=1)
+y = data['Species']
+
+# Step 4: Split the Data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Step 5: Build and Train the Decision Tree Classifier
+dt = DecisionTreeClassifier(random_state=42)
+dt.fit(X_train, y_train)
+
+# Step 6: Evaluate the Model
+y_pred = dt.predict(X_test)
+
+# Classification report
+print("\nClassification Report (Initial Model):")
+print(classification_report(y_test, y_pred))
+
+# Confusion matrix
+conf_matrix = confusion_matrix(y_test, y_pred)
+plt.figure(figsize=(8, 6))
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', 
+            xticklabels=np.unique(y), yticklabels=np.unique(y))
+plt.xlabel('Predicted')
+plt.ylabel('Actual')
+plt.title('Confusion Matrix (Initial Model)')
+plt.show()
+
+# Step 7: Visualize the Decision Tree
+plt.figure(figsize=(12, 8))
+plot_tree(dt, filled=True, feature_names=X.columns, class_names=np.unique(y).astype(str))
+plt.title("Decision Tree Visualization (Initial Model)")
+plt.show()
+
+# Step 8: Hyperparameter Tuning
+# Define the parameter grid
+param_grid = {
+    'criterion': ['gini', 'entropy'],
+    'max_depth': [None, 2, 4, 6, 8, 10],
+    'min_samples_split': [2, 5, 10],
+    'min_samples_leaf': [1, 2, 4]
+}
+
+# Initialize GridSearchCV
+grid_search = GridSearchCV(DecisionTreeClassifier(random_state=42), param_grid, cv=5, n_jobs=-1)
+
+# Fit GridSearchCV
+grid_search.fit(X_train, y_train)
+
+# Best parameters and score
+print("\nBest Parameters:", grid_search.best_params_)
+print("Best Score:", grid_search.best_score_)
+
+# Use the best estimator to make predictions
+best_dt = grid_search.best_estimator_
+y_pred_best = best_dt.predict(X_test)
+
+# Classification report for the best model
+print("\nClassification Report (Optimized Model):")
+print(classification_report(y_test, y_pred_best))
+
+# Step 9: Visualize the Optimized Decision Tree
+plt.figure(figsize=(12, 8))
+plot_tree(best_dt, filled=True, feature_names=X.columns, class_names=np.unique(y).astype(str))
+plt.title("Optimized Decision Tree Visualization")
+plt.show()
